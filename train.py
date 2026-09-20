@@ -4,6 +4,7 @@ import platform
 import time
 from pathlib import Path
 import joblib
+import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -12,6 +13,7 @@ from sklearn.datasets import load_digits
 from sklearn.dummy import DummyClassifier
 from sklearn.metrics import accuracy_score, classification_report, ConfusionMatrixDisplay
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import cross_val_score, learning_curve
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
@@ -28,12 +30,17 @@ def train(output, seed=42):
     model.fit(x_train, y_train)
     training_seconds = time.perf_counter() - start
     predicted = model.predict(x_test)
+    cv_scores = cross_val_score(model, x_train, y_train, cv=5, scoring='accuracy')
+    sizes, train_scores, validation_scores = learning_curve(
+        model, x_train, y_train, train_sizes=np.linspace(.2, 1.0, 5), cv=3, scoring='accuracy')
     metrics = dict(dataset='sklearn bundled UCI optical digits (8x8)', seed=seed,
         train_samples=len(y_train), test_samples=len(y_test),
         baseline_accuracy=accuracy_score(y_test, baseline.predict(x_test)),
         accuracy=accuracy_score(y_test, predicted), training_seconds=training_seconds,
         sklearn_version=sklearn.__version__, python_version=platform.python_version(),
         platform=platform.platform(), model='StandardScaler + SVC(C=10, gamma=scale)',
+        cross_validation_accuracy_mean=float(cv_scores.mean()),
+        cross_validation_accuracy_std=float(cv_scores.std()),
         report=classification_report(y_test, predicted, output_dict=True))
     (output/'metrics.json').write_text(json.dumps(metrics, indent=2), encoding='utf-8')
     joblib.dump(model, output/'model.joblib')
@@ -50,6 +57,16 @@ def train(output, seed=42):
     fig.tight_layout()
     fig.savefig(output/'predictions.png', dpi=140)
     plt.close(fig)
+    plt.plot(sizes, train_scores.mean(axis=1), marker='o', label='train')
+    plt.plot(sizes, validation_scores.mean(axis=1), marker='o', label='validation')
+    plt.xlabel('Training samples')
+    plt.ylabel('Accuracy')
+    plt.ylim(.8, 1.01)
+    plt.grid(alpha=.25)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(output/'learning-curve.png', dpi=140)
+    plt.close()
     print(json.dumps({k:v for k,v in metrics.items() if k != 'report'}, indent=2))
     return metrics
 

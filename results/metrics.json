@@ -5,11 +5,13 @@
   "test_samples": 450,
   "baseline_accuracy": 0.10222222222222223,
   "accuracy": 0.98,
-  "training_seconds": 0.05883779999567196,
+  "training_seconds": 0.056395300023723394,
   "sklearn_version": "1.8.0",
   "python_version": "3.13.0",
   "platform": "Windows-11-10.0.22621-SP0",
   "model": "StandardScaler + SVC(C=10, gamma=scale)",
+  "cross_validation_accuracy_mean": 0.985892881729313,
+  "cross_validation_accuracy_std": 0.009223899455131768,
   "report": {
     "0": {
       "precision": 1.0,

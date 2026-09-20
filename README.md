@@ -9,9 +9,11 @@
 
 ![Confusion matrix](results/confusion-matrix.png)
 
+![Learning curve](results/learning-curve.png)
+
 ## What runs today
 
-当前实现 StandardScaler + SVM 手写数字分类训练、DummyClassifier 对照、分层训练/测试划分、混淆矩阵与模型导出。保留仓库名称；当前不是 LoRA 或大模型微调。缩放器仅在训练集拟合，测试集不参与调参。
+当前实现 StandardScaler + SVM 手写数字分类训练、DummyClassifier 对照、分层训练/测试划分、五折交叉验证、学习曲线、混淆矩阵与模型导出。保留仓库名称；当前不是 LoRA 或大模型微调。缩放器仅在训练集拟合，测试集不参与调参。
 
 ## Quick start
 
@@ -45,6 +47,6 @@ python train.py --seed 42 --output results
 
 ## Attribution
 
-[scikit-learn digits example](https://scikit-learn.org/stable/auto_examples/classification/plot_digits_classification.html) 是方案参考；复用 sklearn（BSD-3-Clause）数据接口与算法，脚本为本仓库新增。数据来自 sklearn 内置 UCI Optical Recognition of Handwritten Digits；运行 load_digits().DESCR 查看来源。模型文件只应从可信来源加载。
+详见 [ATTRIBUTION.md](ATTRIBUTION.md)。复用 scikit-learn（BSD-3-Clause）的数据接口与算法，训练编排与报告脚本为本仓库新增。模型文件只应从可信来源加载。
 
 本仓库新增代码采用 [MIT](LICENSE)，依赖库和数据保持各自许可证。本项目不代表上游官方项目。
